@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MoviSalus · Exercici amb realitat augmentada</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
+</head>
+<body>
+
+  <!-- Canvas de p5.js (vídeo + realitat augmentada) -->
+  <div id="canvasHolder"></div>
+
+  <!-- PANTALLA 1: MENÚ PRINCIPAL -->
+  <main id="menu" class="screen active">
+    <svg class="logo" viewBox="0 0 200 200" role="img" aria-label="Logotip MoviSalus">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ffb703"/><stop offset="1" stop-color="#fb5607"/>
+        </linearGradient>
+      </defs>
+      <circle cx="100" cy="100" r="94" fill="url(#g)"/>
+      <circle cx="100" cy="52" r="17" fill="#fff"/>
+      <path d="M100 72 V128 M100 86 L52 56 M100 86 L148 56 M100 128 L74 170 M100 128 L126 170"
+            stroke="#fff" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <circle cx="52" cy="56" r="9" fill="#0b3d91"/><circle cx="148" cy="56" r="9" fill="#0b3d91"/>
+    </svg>
+    <h1>MoviSalus</h1>
+    <p class="lema">Mou-te, somriu i guanya punts!</p>
+    <button id="btnExercici" class="btn">1 · Començar un exercici</button>
+    <button id="btnInstruccions" class="btn btn-sec">2 · Mostrar les instruccions</button>
+  </main>
+
+  <!-- PANTALLA 2: INSTRUCCIONS -->
+  <section id="instruccions" class="screen">
+    <h2>Com es fa l'exercici?</h2>
+    <p class="subtitol">Exercici: <strong>«Mou els braços»</strong> · 5 moviments suaus</p>
+    <div class="passos">
+      <figure>
+        <svg viewBox="0 0 120 150"><circle cx="60" cy="27" r="11" fill="#ffb703"/>
+          <path d="M60 50 V108 M60 108 L48 140 M60 108 L72 140" stroke="#0b3d91" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M46 50 L40 30 L40 10" stroke="#fb5607" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M74 50 L80 30 L80 10" stroke="#fb5607" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <figcaption><b>1.</b> Aixeca els dos braços</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 120 150"><circle cx="60" cy="27" r="11" fill="#ffb703"/>
+          <path d="M60 50 V108 M60 108 L48 140 M60 108 L72 140" stroke="#0b3d91" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M46 50 L42 68 L42 88" stroke="#0b3d91" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M74 50 L80 30 L80 10" stroke="#fb5607" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <figcaption><b>2.</b> Aixeca només el braç dret</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 120 150"><circle cx="60" cy="27" r="11" fill="#ffb703"/>
+          <path d="M60 50 V108 M60 108 L48 140 M60 108 L72 140" stroke="#0b3d91" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M46 50 L40 30 L40 10" stroke="#fb5607" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M74 50 L78 68 L78 88" stroke="#0b3d91" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <figcaption><b>3.</b> Aixeca només el braç esquerre</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 120 150"><circle cx="60" cy="27" r="11" fill="#ffb703"/>
+          <path d="M60 50 V108 M60 108 L48 140 M60 108 L72 140" stroke="#0b3d91" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M46 50 L29 50 L10 50" stroke="#fb5607" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M74 50 L92 50 L110 50" stroke="#fb5607" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <figcaption><b>4.</b> Obre els braços cap als costats</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 120 150"><circle cx="60" cy="27" r="11" fill="#ffb703"/>
+          <path d="M60 50 V108 M60 108 L48 140 M60 108 L72 140" stroke="#0b3d91" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M46 50 L33 66 L46 48" stroke="#fb5607" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M74 50 L87 66 L74 48" stroke="#fb5607" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <figcaption><b>5.</b> Posa les mans a les espatlles</figcaption>
+      </figure>
+    </div>
+    <ul class="llista">
+      <li>Els moviments són <b>suaus</b>: no cal fer-los ràpid ni forçar. Pots fer l'exercici dret o <b>assegut</b>.</li>
+      <li>Tens <b>30 segons</b>. L'aplicació et va mostrant un moviment darrere l'altre.</li>
+      <li>Mantén cada moviment un moment: quan la barra s'ompli, sumes <b>1 punt</b>.</li>
+      <li>Col·loca't dins del contorn fins que es posi verd. Quan soni la botzina, veuràs la puntuació final.</li>
+    </ul>
+    <button id="btnTornar" class="btn">TORNAR</button>
+  </section>
+
+  <!-- PANTALLA 3: EXERCICI (botó + missatges damunt del canvas) -->
+  <section id="joc" class="screen overlay">
+    <div id="missatge"></div>
+    <button id="btnComencar" class="btn btn-gran" disabled>COMENÇAR!</button>
+  </section>
+
+  <!-- PANTALLA 4: FINAL -->
+  <section id="final" class="screen overlay">
+    <div class="targeta">
+      <h2>Molt bé!</h2>
+      <p>La teva puntuació final:</p>
+      <div id="puntFinal">0</div>
+      <button id="btnFinalitzar" class="btn">FINALITZAR</button>
+    </div>
+  </section>
+
+  <script src="sketch.js"></script>
+</body>
+</html>
